@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -33,7 +35,25 @@ public class App {
     System.setProperty("javax.net.debug", "all");
 
     // oauth1 sample
-    oauth1HttpClientSample();
+    // oauth1HttpClientSample();
+    httpPostSample();
+  }
+
+  public static void httpPostSample() throws ClientProtocolException, IOException {
+
+    HttpPost httpPost = new HttpPost(TEST_URL);
+
+    SSLConnectionSocketFactory sslConnectionSocketFactory =
+        new SSLConnectionSocketFactory(SSLContexts.createDefault(),
+            new String[] {"TLSv1.2", "TLSv1"}, new String[] {"TLS_RSA_WITH_AES_256_CBC_SHA"},
+            SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+
+    CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+    HttpResponse response = httpClient.execute(httpPost);
+    System.out.println(response.getStatusLine().toString());
+    HttpEntity entity = response.getEntity();
+    System.out.println(EntityUtils.toString(entity));
   }
 
   public static void oauth1HttpClientSample() throws IOException, OAuthMessageSignerException,
